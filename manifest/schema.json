@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IIS Games Archive Manifest",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "games"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "games": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "name", "genre", "path", "created_at"],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "genre": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^games/[^/]+/index\\.html$"
+          },
+          "url": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

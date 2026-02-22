@@ -1,0 +1,74 @@
+name: archive-guard
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  allowlist-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate allowlist
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            if [[ "$file" =~ ^games/[^/]+/index\.html$ ]] || \
+               [[ "$file" == "manifest/games.json" ]] || \
+               [[ "$file" == "manifest/schema.json" ]] || \
+               [[ "$file" == "README.md" ]] || \
+               [[ "$file" == ".env.example" ]] || \
+               [[ "$file" == ".github/workflows/archive-guard.yml" ]]; then
+              continue
+            fi
+            echo "Disallowed file detected: $file"
+            exit 1
+          done < <(git ls-files)
+
+          echo "Allowlist check passed."
+
+      - name: Validate manifest schema contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          schema = json.loads(Path("manifest/schema.json").read_text(encoding="utf-8"))
+          manifest = json.loads(Path("manifest/games.json").read_text(encoding="utf-8"))
+
+          required_root = schema.get("required", [])
+          for key in required_root:
+              if key not in manifest:
+                  raise SystemExit(f"manifest missing required root key: {key}")
+
+          if manifest.get("schema_version") != 1:
+              raise SystemExit("manifest.schema_version must be 1")
+
+          games = manifest.get("games")
+          if not isinstance(games, list):
+              raise SystemExit("manifest.games must be an array")
+
+          item_schema = schema["properties"]["games"]["items"]
+          item_required = item_schema.get("required", [])
+          slug_re = re.compile(item_schema["properties"]["slug"]["pattern"])
+          path_re = re.compile(item_schema["properties"]["path"]["pattern"])
+
+          for idx, game in enumerate(games):
+              if not isinstance(game, dict):
+                  raise SystemExit(f"manifest.games[{idx}] must be object")
+              for key in item_required:
+                  if key not in game:
+                      raise SystemExit(f"manifest.games[{idx}] missing required key: {key}")
+              if not slug_re.match(str(game["slug"])):
+                  raise SystemExit(f"manifest.games[{idx}].slug pattern mismatch")
+              if not path_re.match(str(game["path"])):
+                  raise SystemExit(f"manifest.games[{idx}].path pattern mismatch")
+
+          print("Manifest schema contract check passed.")
+          PY
