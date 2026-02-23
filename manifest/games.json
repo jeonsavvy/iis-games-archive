@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T08:40:36.035082+00:00",
+  "generated_at": "2026-02-23T08:44:08.569202+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -49,14 +49,6 @@
       "path": "games/ssh-14f310/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/ssh-14f310/index.html",
       "created_at": "2026-02-23T08:39:01.079556+00:00"
-    },
-    {
-      "slug": "run-790a70",
-      "name": "TeleRun: Command Verified",
-      "genre": "arcade",
-      "path": "games/run-790a70/index.html",
-      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/run-790a70/index.html",
-      "created_at": "2026-02-23T08:40:36.035082+00:00"
     }
   ]
 }
