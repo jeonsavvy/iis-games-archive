@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T08:35:11.874148+00:00",
+  "generated_at": "2026-02-23T08:39:01.079556+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -41,6 +41,14 @@
       "path": "games/game-2b89bbb3d8fd/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-2b89bbb3d8fd/index.html",
       "created_at": "2026-02-23T08:35:11.874148+00:00"
+    },
+    {
+      "slug": "ssh-14f310",
+      "name": "Archive SSH: Key Protocol",
+      "genre": "arcade",
+      "path": "games/ssh-14f310/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/ssh-14f310/index.html",
+      "created_at": "2026-02-23T08:39:01.079556+00:00"
     }
   ]
 }
