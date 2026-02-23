@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T08:57:35.977932+00:00",
+  "generated_at": "2026-02-23T09:03:57.317007+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/3d-1f8538/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/3d-1f8538/index.html",
       "created_at": "2026-02-23T08:46:04.537501+00:00"
+    },
+    {
+      "slug": "game-d5bbb08d752c",
+      "name": "Hyper Drift: Apex",
+      "genre": "score-attack",
+      "path": "games/game-d5bbb08d752c/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-d5bbb08d752c/index.html",
+      "created_at": "2026-02-23T09:03:57.317007+00:00"
     }
   ]
 }
