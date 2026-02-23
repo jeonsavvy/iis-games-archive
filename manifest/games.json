@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T09:29:55.410208+00:00",
+  "generated_at": "2026-02-23T10:32:45.048297+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -41,14 +41,6 @@
       "path": "games/game-d5bbb08d752c/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-d5bbb08d752c/index.html",
       "created_at": "2026-02-23T09:03:57.317007+00:00"
-    },
-    {
-      "slug": "game-4c7ee4a82fe5",
-      "name": "와인딩 코너 집중 드리프트 챌린지 Infinite",
-      "genre": "arcade",
-      "path": "games/game-4c7ee4a82fe5/index.html",
-      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-4c7ee4a82fe5/index.html",
-      "created_at": "2026-02-23T09:29:55.410208+00:00"
     }
   ]
 }
