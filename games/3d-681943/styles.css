@@ -1,0 +1,202 @@
+:root {
+        color-scheme: dark;
+        --viewport-width: 1280;
+        --viewport-height: 720;
+        --safe-area-padding: 24;
+        --min-font-size: 14;
+        --text-overflow-policy: "ellipsis-clamp";
+        --accent: #0EA5E9;
+        --asset-bg-top: #111827;
+        --asset-bg-bottom: #050915;
+        --asset-hud-primary: #e2e8f0;
+        --asset-hud-muted: #93c5fd;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(800px 400px at 20% 0%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 70%),
+          radial-gradient(700px 380px at 90% 0%, #8b5cf622, transparent 68%),
+          linear-gradient(180deg, var(--asset-bg-top), var(--asset-bg-bottom));
+        color: var(--asset-hud-primary);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: max(calc(var(--min-font-size) * 1px), 14px);
+      }
+      main {
+        width: min(96vw, calc(var(--viewport-width) * 1px));
+        min-height: min(92vh, calc(var(--viewport-height) * 1px));
+        padding: calc(var(--safe-area-padding) * 1px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        background: rgba(2, 6, 23, 0.85);
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      }
+      .hud-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        background: rgba(15, 23, 42, 0.6);
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+      .overflow-guard {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .title {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 26px);
+        font-weight: 900;
+        text-transform: uppercase;
+        background: linear-gradient(to right, #fff, var(--asset-hud-muted));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 0.02em;
+      }
+      .sub {
+        margin: 0;
+        color: var(--asset-hud-muted);
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .hint {
+        margin: 0;
+        color: color-mix(in srgb, var(--asset-hud-muted) 72%, #64748b);
+        font-size: 13px;
+        text-align: center;
+        font-weight: 500;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #0EA5E955;
+        color: #dbeafe;
+        background: rgba(14, 165, 233, 0.1);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+      @keyframes pulse-score {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+      }
+      .stat {
+        font-weight: 800;
+        font-size: 15px;
+        color: #fff;
+        text-shadow: 0 0 10px var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0,0,0,0.3);
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.05);
+      }
+      #score { animation: pulse-score 2s infinite ease-in-out; }
+      .stat::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+      }
+      #hp::before { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+      #timer::before { background: #eab308; box-shadow: 0 0 8px #eab308; }
+      
+      .stage {
+        position: relative;
+        border-radius: 14px;
+        border: 1px solid #1e293b;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.15);
+      }
+      .stage::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.1),
+          rgba(0, 0, 0, 0.1) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        aspect-ratio: 16 / 9;
+        background: #030712;
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms ease;
+        z-index: 10;
+      }
+      .overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .overlay-card {
+        text-align: center;
+        padding: 32px;
+        border-radius: 16px;
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95));
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(14, 165, 233, 0.1);
+        min-width: min(88vw, 360px);
+      }
+      #overlay-title {
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 0 12px var(--accent);
+        margin: 0 0 12px;
+      }
+      button {
+        border: none;
+        background: linear-gradient(90deg, #0EA5E9, #2563EB);
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
