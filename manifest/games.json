@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-21T00:00:00Z",
+  "generated_at": "2026-02-23T04:15:33.992989+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -9,6 +9,14 @@
       "path": "games/example-score-attack/index.html",
       "url": "",
       "created_at": "2026-02-21T00:00:00Z"
+    },
+    {
+      "slug": "test-game-gitops",
+      "name": "Test Game GitOps",
+      "genre": "action",
+      "path": "games/test-game-gitops/index.html",
+      "url": "https://example.com",
+      "created_at": "2026-02-23T04:15:33.992989+00:00"
     }
   ]
 }
