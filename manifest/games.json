@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T11:08:19.316737+00:00",
+  "generated_at": "2026-02-23T12:05:16.407995+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/3d-681943/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/3d-681943/index.html",
       "created_at": "2026-02-23T11:08:19.316737+00:00"
+    },
+    {
+      "slug": "webgl-three-js-3d-outrun",
+      "name": "Neon Drift: Outrun Chain",
+      "genre": "score-attack",
+      "path": "games/webgl-three-js-3d-outrun/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/webgl-three-js-3d-outrun/index.html",
+      "created_at": "2026-02-23T12:05:16.407995+00:00"
     }
   ]
 }
