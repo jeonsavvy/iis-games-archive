@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T08:28:25.555415+00:00",
+  "generated_at": "2026-02-23T08:35:11.874148+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/game-91af40d7b840/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-91af40d7b840/index.html",
       "created_at": "2026-02-23T08:28:25.555415+00:00"
+    },
+    {
+      "slug": "game-2b89bbb3d8fd",
+      "name": "Tele-Link: Portal Conversion",
+      "genre": "arcade",
+      "path": "games/game-2b89bbb3d8fd/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-2b89bbb3d8fd/index.html",
+      "created_at": "2026-02-23T08:35:11.874148+00:00"
     }
   ]
 }
