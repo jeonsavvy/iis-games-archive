@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T06:10:47.782740+00:00",
+  "generated_at": "2026-02-23T08:28:25.555415+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -25,6 +25,14 @@
       "path": "games/new-game/index.html",
       "url": "https://example.com/games/new-game/index.html",
       "created_at": "2026-02-23T06:10:44.460691+00:00"
+    },
+    {
+      "slug": "game-91af40d7b840",
+      "name": "Archive Push: Final Verification",
+      "genre": "arcade",
+      "path": "games/game-91af40d7b840/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-91af40d7b840/index.html",
+      "created_at": "2026-02-23T08:28:25.555415+00:00"
     }
   ]
 }
