@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-23T10:32:47.369198+00:00",
+  "generated_at": "2026-02-23T10:32:54.706573+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -25,14 +25,6 @@
       "path": "games/new-game/index.html",
       "url": "https://example.com/games/new-game/index.html",
       "created_at": "2026-02-23T06:10:44.460691+00:00"
-    },
-    {
-      "slug": "3d-1f8538",
-      "name": "Poly Kart: Drift Dash",
-      "genre": "arcade",
-      "path": "games/3d-1f8538/index.html",
-      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/3d-1f8538/index.html",
-      "created_at": "2026-02-23T08:46:04.537501+00:00"
     }
   ]
 }
