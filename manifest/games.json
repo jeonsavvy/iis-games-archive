@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-02-28T14:42:04.406852+00:00",
+  "generated_at": "2026-03-01T09:09:34.765195+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/f1-3d/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/f1-3d/index.html",
       "created_at": "2026-02-28T14:42:04.406852+00:00"
+    },
+    {
+      "slug": "1-fps",
+      "name": "Neon Strike: First-Person Arena",
+      "genre": "fast-paced-arena-shooter",
+      "path": "games/1-fps/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/1-fps/index.html",
+      "created_at": "2026-03-01T09:09:34.765195+00:00"
     }
   ]
 }
