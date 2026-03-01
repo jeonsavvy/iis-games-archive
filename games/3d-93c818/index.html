@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Poly Punch 3D: Arena Clash</title>
+        <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main data-overflow-policy="ellipsis-clamp">
+      <div class="hud-row">
+        <div style="display:grid;gap:4px;min-width:0">
+          <h1 class="title overflow-guard">Poly Punch 3D: Arena Clash</h1>
+          <p class="sub overflow-guard">Mode: Fighter</p>
+        </div>
+        <span class="chip overflow-guard">3d-93c818</span>
+      </div>
+      <div class="hud-row">
+        <strong id="score" class="stat overflow-guard">Score: 0</strong>
+        <strong id="timer" class="stat overflow-guard">Time: 60.0</strong>
+        <strong id="hp" class="stat overflow-guard">HP: 3</strong>
+      </div>
+      <div class="stage">
+        <canvas id="game" width="1280" height="720"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <h2 id="overlay-title" style="margin:0 0 6px">Game Over</h2>
+            <p id="overlay-text" class="hint" style="margin:0 0 12px"></p>
+            <button id="restart-btn" type="button">다시 시작 (R)</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint overflow-guard">근접전으로 적의 체력을 먼저 깎아 승리하세요. / ← → ↑ ↓ 이동 / Space 공격 / R 재시작</p>
+      <!-- leaderboard contract exposed as window.IISLeaderboard.submitScore -->
+    </main>
+        <script src="./game.js"></script>
+  </body>
+</html>
