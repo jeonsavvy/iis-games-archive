@@ -41,3 +41,9 @@ PYTHONDONTWRITEBYTECODE=1 python -B -m compileall -q scripts
 ## 자동 커밋 메시지 규칙
 
 - 자동 반영 커밋 메시지 형식: `feat: archive <game_slug>`
+
+## 삭제 실패 대응 정책
+
+- 운영 삭제 요청 시 **DB/Storage 삭제 성공**이 우선 기준입니다.
+- 아카이브 저장소 삭제가 실패하면 코어 엔진은 warning(`archive_delete_failed`)을 반환합니다.
+- 운영자는 warning 대상 slug를 모아서 재처리 배치(archive cleanup)를 실행합니다.
