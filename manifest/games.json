@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-03-01T15:22:25.227845+00:00",
+  "generated_at": "2026-03-02T05:10:39.552481+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -41,14 +41,6 @@
       "path": "games/1-fps/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/1-fps/index.html",
       "created_at": "2026-03-01T09:09:34.765195+00:00"
-    },
-    {
-      "slug": "3d-93c818",
-      "name": "Poly Punch 3D: Arena Clash",
-      "genre": "3d-arena-brawler",
-      "path": "games/3d-93c818/index.html",
-      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/3d-93c818/index.html",
-      "created_at": "2026-03-01T15:22:25.227845+00:00"
     }
   ]
 }
