@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-03-02T14:57:27.042132+00:00",
+  "generated_at": "2026-03-02T14:57:30.238809+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -49,14 +49,6 @@
       "path": "games/game-f7439b4f3499/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-f7439b4f3499/index.html",
       "created_at": "2026-03-02T06:55:38.943152+00:00"
-    },
-    {
-      "slug": "game-4feb423744cb",
-      "name": "Apex Hauler: Truck Racing",
-      "genre": "heavy-truck-racing-3d",
-      "path": "games/game-4feb423744cb/index.html",
-      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-4feb423744cb/index.html",
-      "created_at": "2026-03-02T09:54:34.036432+00:00"
     }
   ]
 }
