@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Metro Gunner: Urban Sweep</title>
+        <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main data-overflow-policy="ellipsis-clamp">
+      <div class="stage">
+        <div class="stage-hud">
+          <div class="stage-hud-card" style="display:grid;gap:4px;min-width:0">
+            <h1 class="title overflow-guard">Metro Gunner: Urban Sweep</h1>
+            <p class="sub overflow-guard">Mode: Topdown Roguelike</p>
+          </div>
+          <div class="stage-hud-card stat-row">
+            <strong id="score" class="stat overflow-guard">Score: 0</strong>
+            <strong id="timer" class="stat overflow-guard">Time: 60.0</strong>
+            <strong id="hp" class="stat overflow-guard">HP: 3</strong>
+          </div>
+        </div>
+        <canvas id="game" width="1280" height="720"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <h2 id="overlay-title" style="margin:0 0 6px">Game Over</h2>
+            <p id="overlay-text" class="hint" style="margin:0 0 12px"></p>
+            <button id="restart-btn" type="button">다시 시작 (R)</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint overflow-guard">대시와 집중 사격으로 몬스터 웨이브를 돌파하고 생존 콤보를 이어가세요. / ← → ↑ ↓ 이동 / Space 발사 / Shift 대시 / R 재시작</p>
+      <!-- leaderboard contract exposed as window.IISLeaderboard.submitScore -->
+    </main>
+        <script src="./game.js"></script>
+  </body>
+</html>
