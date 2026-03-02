@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-03-02T16:29:21.655474+00:00",
+  "generated_at": "2026-03-02T16:36:46.392614+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -25,6 +25,14 @@
       "path": "games/new-game/index.html",
       "url": "https://example.com/games/new-game/index.html",
       "created_at": "2026-02-23T06:10:44.460691+00:00"
+    },
+    {
+      "slug": "game-bddbf9f4ebe7",
+      "name": "AeroPilot: Flight Simulator",
+      "genre": "flight-simulation-3d",
+      "path": "games/game-bddbf9f4ebe7/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-bddbf9f4ebe7/index.html",
+      "created_at": "2026-03-02T16:36:46.392614+00:00"
     }
   ]
 }
