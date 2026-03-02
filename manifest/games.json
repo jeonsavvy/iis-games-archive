@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-03-02T05:13:09.366305+00:00",
+  "generated_at": "2026-03-02T05:30:04.153098+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/3d-ad926d/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/3d-ad926d/index.html",
       "created_at": "2026-03-02T05:13:09.366305+00:00"
+    },
+    {
+      "slug": "game-938aa6f8883d",
+      "name": "Iron Strike: Poly Tournament",
+      "genre": "3d-arena-fighter",
+      "path": "games/game-938aa6f8883d/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/game-938aa6f8883d/index.html",
+      "created_at": "2026-03-02T05:30:04.153098+00:00"
     }
   ]
 }
