@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IIS Lowpoly Island Flight - Sunset Edition</title>
+  <style>
+    html, body { 
+      margin: 0; 
+      height: 100%; 
+      overflow: hidden; 
+      /* Warm sunset gradient: Purple zenith to Orange/Pink horizon */
+      background: linear-gradient(180deg, #2e1065 0%, #7e22ce 30%, #f97316 70%, #ffedd5 100%); 
+      font-family: Inter, system-ui, sans-serif; 
+      color: #eff6ff; 
+      user-select: none;
+    }
+    #app { position: relative; width: 100%; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; }
+    #hud { 
+      position: absolute; top: 18px; left: 18px; 
+      display: grid; gap: 6px; 
+      min-width: 260px; padding: 16px 20px; 
+      border-radius: 16px; 
+      background: rgba(67, 20, 7, 0.45); 
+      border: 1px solid rgba(253, 186, 116, 0.3); 
+      backdrop-filter: blur(12px); 
+      pointer-events: none; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    #hud strong { font-size: 28px; color: #fbbf24; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    #hud span { font-size: 13px; color: #ffedd5; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    #controls { 
+      position: absolute; top: 18px; right: 18px; 
+      max-width: 280px; padding: 14px 18px; 
+      border-radius: 14px; 
+      background: rgba(67, 20, 7, 0.35); 
+      border: 1px solid rgba(253, 186, 116, 0.2); 
+      line-height: 1.6; font-size: 12px; color: #fed7aa;
+      pointer-events: none; 
+    }
+    #countdown { 
+      position: absolute; inset: 0; 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 84px; font-weight: 900; 
+      color: #fef3c7; 
+      text-shadow: 0 0 40px rgba(245, 158, 11, 0.8); 
+      pointer-events: none; 
+      transition: opacity 300ms ease; 
+    }
+    .key { color: #fff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="hud">
+      <span style="letter-spacing: 1px; opacity: 0.8;">ISLAND FLIGHT</span>
+      <strong id="ring-readout">Rings 0 / 8</strong>
+      <span id="speed-readout">Speed 0 knots</span>
+      <span id="altitude-readout">Altitude 18m</span>
+      <span id="status-readout">Engine ready · Press keys to start</span>
+    </div>
+    <div id="controls">
+      <b style="font-size:14px; color:#fff;">Flight Controls</b><br />
+      Pitch: <span class="key">W</span> / <span class="key">S</span><br />
+      Turn: <span class="key">A</span> / <span class="key">D</span><br />
+      Boost: <span class="key">SHIFT</span><br />
+      Stabilize: <span class="key">SPACE</span><br />
+      Reset: <span class="key">R</span>
+    </div>
+    <div id="countdown">3</div>
+  </div>
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.169.0/build/three.module.js";
+
+    if (!window.IISLeaderboard) {
+      window.IISLeaderboard = { postScore: (score) => console.log("IIS:score", score) };
+    }
+    window.__iis_game_boot_ok = false;
+
+    // UI Elements
+    const ringReadout = document.getElementById("ring-readout");
+    const speedReadout = document.getElementById("speed-readout");
+    const altitudeReadout = document.getElementById("altitude-readout");
+    const statusReadout = document.getElementById("status-readout");
+    const countdownEl = document.getElementById("countdown");
+
+    // Scene Setup
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    document.getElementById("app").appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    // Warm sunset fog blending into the horizon color
+    scene.fog = new THREE.Fog(0xffedd5, 40, 280); 
+
+    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 600);
+
+    // Lighting - Sunset Style
+    const sun = new THREE.DirectionalLight(0xffaa33, 2.5); // Golden hour sun
+    sun.position.set(-40, 15, -30);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    // Ambient light: warm ground reflection, cool sky
+    const hemiLight = new THREE.HemisphereLight(0x818cf8, 0xfdbe11, 0.8);
+    scene.add(hemiLight);
+
+    // Environment: Sea
+    const sea = new THREE.Mesh(
+      new THREE.CircleGeometry(400, 64),
+      new THREE.MeshStandardMaterial({ 
+        color: 0x0ea5e9, 
+        flatShading: true, 
+        roughness: 0.2, 
+        metalness: 0.1,
+        emissive: 0x001133,
+        emissiveIntensity: 0.2
+      })
+    );
+    sea.rotation.x = -Math.PI / 2;
+    sea.position.y = -2.0;
+    scene.add(sea);
+
+    // Environment: Islands
+    const islands = new THREE.Group();
+    scene.add(islands);
+    const islandLayout = [
+      { x: 0, z: -18, scale: 1.6 },
+      { x: 22, z: -42, scale: 1.0 },
+      { x: -24, z: -54, scale: 1.1 },
+      { x: 10, z: -78, scale: 1.3 },
+      { x: -15, z: -96, scale: 0.9 },
+      { x: 35, z: -120, scale: 1.8 },
+      { x: -40, z: -20, scale: 0.8 },
+    ];
+    
+    const islandMat = new THREE.MeshStandardMaterial({ color: 0x4d7c0f, flatShading: true, roughness: 0.9 });
+    const beachMat = new THREE.MeshStandardMaterial({ color: 0xfcd34d, flatShading: true, roughness: 0.8 });
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, flatShading: true });
+    const crownMat = new THREE.MeshStandardMaterial({ color: 0x15803d, flatShading: true });
+
+    islandLayout.forEach((item) => {
+      const island = new THREE.Mesh(
+        new THREE.CylinderGeometry(6 * item.scale, 14 * item.scale, 6 + item.scale * 8, 7),
+        islandMat
+      );
+      island.position.set(item.x, 0, item.z);
+      islands.add(island);
+      
+      const beach = new THREE.Mesh(
+        new THREE.CylinderGeometry(7 * item.scale, 15 * item.scale, 1.2, 7),
+        beachMat
+      );
+      beach.position.set(item.x, -2.8, item.z);
+      islands.add(beach);
+      
+      // Trees
+      const treeCount = Math.floor(Math.random() * 3) + 1;
+      for(let i=0; i<treeCount; i++) {
+        const tree = new THREE.Group();
+        const offset = (Math.random() - 0.5) * 5 * item.scale;
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.28, 1.8, 5), trunkMat);
+        trunk.position.y = 0.9;
+        const crown = new THREE.Mesh(new THREE.ConeGeometry(1.2 * item.scale, 2.8 * item.scale, 5), crownMat);
+        crown.position.y = 2.4;
+        tree.add(trunk, crown);
+        
+        tree.position.set(item.x + offset, 2 + item.scale*2, item.z + (Math.random()-0.5)*5*item.scale);
+        tree.rotation.y = Math.random() * Math.PI;
+        islands.add(tree);
+      }
+    });
+
+    // Player: Propeller Plane Assembly
+    const plane = new THREE.Group();
+    
+    // 1. Fuselage
+    const fuselage = new THREE.Mesh(
+      new THREE.BoxGeometry(1.0, 1.0, 4.0),
+      new THREE.MeshStandardMaterial({ color: 0xf1f5f9, flatShading: true, roughness: 0.5 })
+    );
+    plane.add(fuselage);
+
+    // 2. Cockpit Glass
+    const cockpit = new THREE.Mesh(
+      new THREE.BoxGeometry(0.8, 0.4, 1.2),
+      new THREE.MeshStandardMaterial({ color: 0x93c5fd, flatShading: true, roughness: 0.2, metalness: 0.8 })
+    );
+    cockpit.position.set(0, 0.6, 0.2);
+    plane.add(cockpit);
+
+    // 3. Nose (Cowling)
+    const nose = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.2, 0.9, 1.2, 8),
+      new THREE.MeshStandardMaterial({ color: 0xea580c, flatShading: true }) // Burnt orange nose
+    );
+    nose.rotation.x = -Math.PI / 2;
+    nose.position.set(0, -0.1, 2.4);
+    plane.add(nose);
+
+    // 4. Main Wings
+    const mainWing = new THREE.Mesh(
+      new THREE.BoxGeometry(6.4, 0.15, 1.2),
+      new THREE.MeshStandardMaterial({ color: 0xea580c, flatShading: true }) // Matching orange wings
+    );
+    mainWing.position.set(0, 0.2, 0.5);
+    plane.add(mainWing);
+    // Wing struts
+    const strutL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.0, 0.1), new THREE.MeshStandardMaterial({color: 0x333333}));
+    strutL.position.set(-1.5, -0.4, 0.5);
+    strutL.rotation.z = 0.4;
+    plane.add(strutL);
+    const strutR = strutL.clone();
+    strutR.position.set(1.5, -0.4, 0.5);
+    strutR.rotation.z = -0.4;
+    plane.add(strutR);
+
+    // 5. Tail Assembly
+    const hStab = new THREE.Mesh(
+      new THREE.BoxGeometry(2.4, 0.1, 0.8),
+      new THREE.MeshStandardMaterial({ color: 0xea580c, flatShading: true })
+    );
+    hStab.position.set(0, 0.3, -1.6);
+    plane.add(hStab);
+
+    const vStab = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 1.2, 0.8),
+      new THREE.MeshStandardMaterial({ color: 0xf1f5f9, flatShading: true })
+    );
+    vStab.position.set(0, 0.6, -1.6);
+    // Slant the tail slightly
+    const vStabGeo = new THREE.BufferGeometry().copy(vStab.geometry); // Use buffer geo for custom shape if needed, but box is fine for lowpoly
+    vStab.rotation.x = 0.2;
+    plane.add(vStab);
+
+    // 6. Propeller
+    const propellerGroup = new THREE.Group();
+    const propBlade = new THREE.Mesh(
+      new THREE.BoxGeometry(0.12, 1.8, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, flatShading: true })
+    );
+    const propSpinner = new THREE.Mesh(
+      new THREE.ConeGeometry(0.2, 0.4, 8),
+      new THREE.MeshStandardMaterial({ color: 0x94a3b8 })
+    );
+    propSpinner.rotation.x = Math.PI / 2;
+    propSpinner.position.z = 0.1;
+    propellerGroup.add(propBlade, propSpinner);
+    propellerGroup.position.set(0, 0, 3.05);
+    plane.add(propellerGroup);
+
+    scene.add(plane);
+
+    // Rings
+    const ringMeshes = [];
+    const ringPositions = [
+      { x: 0, y: 8, z: -24 },
+      { x: 18, y: 12, z: -36 },
+      { x: -18, y: 14, z: -52 },
+      { x: 8, y: 18, z: -72 },
+      { x: -10, y: 12, z: -88 },
+      { x: 24, y: 15, z: -102 },
+      { x: -22, y: 10, z: -118 },
+      { x: 0, y: 16, z: -134 },
+    ];
+    
+    const ringGeo = new THREE.TorusGeometry(2.4, 0.3, 8, 24);
+    const ringMat = new THREE.MeshStandardMaterial({ 
+      color: 0xfcd34d, 
+      emissive: 0xf59e0b, 
+      emissiveIntensity: 0.6,
+      flatShading: true 
+    });
+
+    ringPositions.forEach((pos) => {
+      const mesh = new THREE.Mesh(ringGeo, ringMat);
+      mesh.position.set(pos.x, pos.y, pos.z);
+      ringMeshes.push({ mesh, collected: false });
+      scene.add(mesh);
+    });
+
+    // Particle System
+    const particles = [];
+    const particleGeo = new THREE.TetrahedronGeometry(0.5, 0);
+    const particleMat = new THREE.MeshBasicMaterial({ color: 0xfef08a, transparent: true });
+
+    function spawnParticles(pos, count) {
+      for(let i=0; i<count; i++) {
+        const mesh = new THREE.Mesh(particleGeo, particleMat.clone());
+        mesh.position.copy(pos);
+        // Random spread
+        mesh.position.x += (Math.random() - 0.5) * 3;
+        mesh.position.y += (Math.random() - 0.5) * 3;
+        mesh.position.z += (Math.random() - 0.5) * 3;
+        
+        const velocity = new THREE.Vector3(
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 10
+        );
+        
+        scene.add(mesh);
+        particles.push({
+          mesh,
+          velocity,
+          life: 1.0 + Math.random() * 0.5,
+          maxLife: 1.5
+        });
+      }
+    }
+
+    // Input & State
+    const input = { pitchUp: false, pitchDown: false, yawLeft: false, yawRight: false, boost: false, stabilize: false };
+    const state = {
+      position: new THREE.Vector3(0, 11, 16),
+      velocity: new THREE.Vector3(0, 0, -18),
+      pitch: 0, roll: 0, yaw: 0,
+      yawVelocity: 0, climbVelocity: 0,
+      speed: 22,
+      rings: 0,
+      countdown: 3,
+      started: false,
+      lastSafePoint: new THREE.Vector3(0, 11, 16),
+      lastSafeYaw: 0,
+    };
+
+    function onKey(event, pressed) {
+      if (event.code === "KeyW") input.pitchUp = pressed;
+      if (event.code === "KeyS") input.pitchDown = pressed;
+      if (event.code === "KeyA") input.yawLeft = pressed;
+      if (event.code === "KeyD") input.yawRight = pressed;
+      if (event.code === "ShiftLeft" || event.code === "ShiftRight") input.boost = pressed;
+      if (event.code === "Space") input.stabilize = pressed;
+      if (pressed && event.code === "KeyR") resetFlight();
+      
+      // Init audio context on first user interaction
+      if (pressed && !window.__iisAudioCtx) initAudio();
+    }
+    window.addEventListener("keydown", (event) => onKey(event, true));
+    window.addEventListener("keyup", (event) => onKey(event, false));
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Audio System
+    let engineOsc = null;
+    let engineGain = null;
+
+    function initAudio() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      window.__iisAudioCtx = new Ctx();
+      
+      // Engine Loop
+      engineOsc = window.__iisAudioCtx.createOscillator();
+      engineGain = window.__iisAudioCtx.createGain();
+      
+      engineOsc.type = 'sawtooth';
+      engineOsc.frequency.value = 100;
+      engineGain.gain.value = 0.05;
+      
+      // Lowpass filter to muffle the engine
+      const filter = window.__iisAudioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+
+      engineOsc.connect(filter);
+      filter.connect(engineGain);
+      engineGain.connect(window.__iisAudioCtx.destination);
+      engineOsc.start();
+    }
+
+    function updateEngineSound() {
+      if(engineOsc && window.__iisAudioCtx) {
+        // Pitch based on speed
+        const targetFreq = 80 + (state.speed * 4);
+        engineOsc.frequency.setTargetAtTime(targetFreq, window.__iisAudioCtx.currentTime, 0.1);
+        // Volume based on boost
+        const targetVol = input.boost ? 0.08 : 0.04;
+        engineGain.gain.setTargetAtTime(targetVol, window.__iisAudioCtx.currentTime, 0.1);
+      }
+    }
+
+    function playRingTone() {
+      if (!window.__iisAudioCtx) return;
+      if (window.__iisAudioCtx.state === "suspended") window.__iisAudioCtx.resume();
+      
+      const osc = window.__iisAudioCtx.createOscillator();
+      const gain = window.__iisAudioCtx.createGain();
+      
+      osc.type = "sine";
+      // Pentatonic scale-ish rise
+      const notes = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+      const note = notes[Math.min(state.rings, notes.length - 1)];
+      
+      osc.frequency.setValueAtTime(note, window.__iisAudioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(note * 2, window.__iisAudioCtx.currentTime + 0.1);
+      
+      gain.gain.setValueAtTime(0.1, window.__iisAudioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, window.__iisAudioCtx.currentTime + 0.4);
+      
+      osc.connect(gain).connect(window.__iisAudioCtx.destination);
+      osc.start();
+      osc.stop(window.__iisAudioCtx.currentTime + 0.4);
+    }
+
+    function respawn(reason) {
+      state.position.copy(state.lastSafePoint);
+      state.velocity.set(0, 0, -18);
+      state.pitch = 0; state.roll = 0;
+      state.yawVelocity = 0; state.climbVelocity = 0;
+      state.speed = 18;
+      state.yaw = state.lastSafeYaw;
+      statusReadout.textContent = reason;
+    }
+
+    function resetFlight() {
+      state.position.set(0, 11, 16);
+      state.velocity.set(0, 0, -18);
+      state.pitch = 0; state.roll = 0; state.yaw = 0;
+      state.yawVelocity = 0; state.climbVelocity = 0;
+      state.speed = 22;
+      state.rings = 0;
+      state.countdown = 3;
+      state.started = false;
+      state.lastSafePoint.set(0, 11, 16);
+      state.lastSafeYaw = 0;
+      
+      ringMeshes.forEach((ring) => {
+        ring.collected = false;
+        ring.mesh.visible = true;
+      });
+      
+      // Clear particles
+      particles.forEach(p => scene.remove(p.mesh));
+      particles.length = 0;
+
+      countdownEl.textContent = "3";
+      countdownEl.style.opacity = "1";
+      statusReadout.textContent = "Propeller spinning · line up for the rings";
+    }
+
+    let lastTime = performance.now();
+    function animate(nowMs) {
+      const dt = Math.min(0.05, (nowMs - lastTime) / 1000);
+      lastTime = nowMs;
+
+      // Particle update
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= dt;
+        p.mesh.position.addScaledVector(p.velocity, dt);
+        p.mesh.rotation.x += dt * 2;
+        p.mesh.rotation.y += dt * 2;
+        const scale = (p.life / p.maxLife);
+        p.mesh.scale.setScalar(scale);
+        p.mesh.material.opacity = scale;
+        if (p.life <= 0) {
+          scene.remove(p.mesh);
+          particles.splice(i, 1);
+        }
+      }
+
+      if (!state.started) {
+        state.countdown = Math.max(0, state.countdown - dt);
+        const shown = Math.ceil(state.countdown);
+        countdownEl.textContent = shown > 0 ? String(shown) : "FLY!";
+        if (state.countdown <= 0) {
+          state.started = true;
+          setTimeout(() => { countdownEl.style.opacity = "0"; }, 500);
+        }
+        
+        // Idle animation
+        propellerGroup.rotation.z += dt * 10;
+        plane.position.y = 11 + Math.sin(nowMs * 0.002) * 0.5;
+        
+        renderer.render(scene, camera);
+        window.requestAnimationFrame(animate);
+        return;
+      }
+
+      // Flight Physics
+      const pitchInput = (input.pitchUp ? 1 : 0) - (input.pitchDown ? 1 : 0);
+      const yawInput = (input.yawRight ? 1 : 0) - (input.yawLeft ? 1 : 0);
+      
+      // Pitch control
+      state.pitch = THREE.MathUtils.clamp(
+        THREE.MathUtils.lerp(state.pitch, pitchInput * 0.45, dt * (input.stabilize ? 5.0 : 2.5)),
+        -0.6, 0.6
+      );
+      
+      // Yaw & Roll
+      state.yawVelocity = THREE.MathUtils.lerp(state.yawVelocity, yawInput * 1.2, dt * 3.5);
+      state.yaw += state.yawVelocity * dt * (0.8 + state.speed * 0.01);
+      const targetRoll = -yawInput * 0.7; // Banking
+      state.roll = THREE.MathUtils.lerp(state.roll, input.stabilize ? 0 : targetRoll, dt * 3.0);
+      
+      // Speed & Throttle
+      const throttle = input.boost ? 1.6 : 1.0;
+      state.speed = THREE.MathUtils.lerp(state.speed, 24 * throttle, dt * 2.0);
+      
+      // Stabilization
+      if (input.stabilize) {
+        state.pitch = THREE.MathUtils.lerp(state.pitch, 0, dt * 4.0);
+        state.yawVelocity = THREE.MathUtils.lerp(state.yawVelocity, 0, dt * 4.0);
+      }
+
+      // Apply Transform
+      const rotation = new THREE.Euler(-state.pitch, state.yaw, state.roll, "YXZ");
+      plane.quaternion.setFromEuler(rotation);
+      propellerGroup.rotation.z += dt * (20 + state.speed * 0.8);
+
+      // Movement
+      const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(plane.quaternion);
+      state.velocity.lerp(forward.multiplyScalar(state.speed), dt * 2.0);
+      state.position.addScaledVector(state.velocity, dt);
+      
+      // Climb Physics (Simple)
+      state.climbVelocity = THREE.MathUtils.lerp(state.climbVelocity, state.pitch * 15, dt * 2.0);
+      state.position.y = THREE.MathUtils.clamp(state.position.y + state.climbVelocity * dt, 4.0, 40);
+      
+      // Boundary & Crash Checks
+      if (state.position.y <= 4.2 || state.position.z < -200 || Math.abs(state.position.x) > 120) {
+        respawn("Too far off course · returning to route");
+      }
+      plane.position.copy(state.position);
+
+      // Ring Collision
+      ringMeshes.forEach((ring) => {
+        ring.mesh.rotation.z += dt * 0.5; // Spin rings slowly
+        if (!ring.collected && ring.mesh.position.distanceTo(plane.position) < 3.0) {
+          ring.collected = true;
+          ring.mesh.visible = false;
+          state.rings += 1;
+          
+          // Checkpoint logic
+          state.lastSafePoint.copy(ring.mesh.position).add(new THREE.Vector3(0, 2, 10));
+          state.lastSafeYaw = state.yaw;
+          
+          statusReadout.textContent = `Excellent! ${state.rings} / ${ringMeshes.length}`;
+          window.IISLeaderboard.postScore(200 + state.rings * 50);
+          
+          playRingTone();
+          spawnParticles(ring.mesh.position, 12);
+        }
+      });
+
+      updateEngineSound();
+
+      // Camera Follow
+      const desiredCamera = plane.position.clone().add(new THREE.Vector3(0, 5, 14).applyQuaternion(plane.quaternion));
+      camera.position.lerp(desiredCamera, 0.1);
+      const lookTarget = plane.position.clone().add(forward.clone().multiplyScalar(30));
+      camera.lookAt(lookTarget);
+      
+      // Dynamic FOV
+      camera.fov = THREE.MathUtils.lerp(camera.fov, input.boost ? 80 : 65, dt * 2.0);
+      camera.updateProjectionMatrix();
+
+      // HUD
+      ringReadout.textContent = `Rings ${state.rings} / ${ringMeshes.length}`;
+      speedReadout.textContent = `Speed ${Math.round(state.speed * 3.8)} knots`;
+      altitudeReadout.textContent = `Altitude ${Math.round(state.position.y)}m`;
+      if (state.rings === ringMeshes.length) {
+        statusReadout.textContent = "Course Complete! Enjoy the sunset.";
+      }
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(animate);
+    }
+
+    resetFlight();
+    window.__iis_game_boot_ok = true;
+    window.requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
