@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-03-06T14:29:08.127889+00:00",
+  "generated_at": "2026-03-07T14:41:47.259186+00:00",
   "games": [
     {
       "slug": "example-score-attack",
@@ -33,6 +33,14 @@
       "path": "games/new-session/index.html",
       "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/new-session/index.html",
       "created_at": "2026-03-06T14:29:08.127889+00:00"
+    },
+    {
+      "slug": "neon-grid-grand-prix",
+      "name": "Neon Grid Grand Prix",
+      "genre": "racing_openwheel_circuit_3d",
+      "path": "games/neon-grid-grand-prix/index.html",
+      "url": "https://mcwoqialnmxdvbrykhpp.supabase.co/storage/v1/object/public/games/neon-grid-grand-prix/index.html",
+      "created_at": "2026-03-07T14:41:47.259186+00:00"
     }
   ]
 }
